@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="system">
+<head>
+    <meta charset="UTF-8">
+    <title>Employee System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #050816;
+            --bg-light: #f5f5f5;
+            --card-dark: #0f172a;
+            --card-light: #ffffff;
+            --text-dark: #e5e7eb;
+            --text-light: #111827;
+            --accent: #3b82f6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: "Poppins", sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            transition: background 0.4s, color 0.4s;
+        }
+
+        body.dark {
+            background: radial-gradient(circle at top, #1f2933, #020617);
+            color: var(--text-dark);
+        }
+
+        body.light {
+            background: radial-gradient(circle at top, #e5f0ff, #f9fafb);
+            color: var(--text-light);
+        }
+
+        /* 3D floating shapes */
+        .bg-orbit {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(2px);
+            opacity: 0.7;
+            animation: float 18s infinite alternate ease-in-out;
+        }
+
+        .orb.one {
+            width: 260px; height: 260px;
+            background: radial-gradient(circle, #3b82f6, #1d4ed8);
+            top: 5%; left: 10%;
+        }
+
+        .orb.two {
+            width: 320px; height: 320px;
+            background: radial-gradient(circle, #22c55e, #15803d);
+            bottom: -5%; right: 5%;
+            animation-delay: 3s;
+        }
+
+        .orb.three {
+            width: 180px; height: 180px;
+            background: radial-gradient(circle, #f97316, #c2410c);
+            top: 60%; left: -5%;
+            animation-delay: 6s;
+        }
+
+        @keyframes float {
+            0% { transform: translate3d(0,0,0) scale(1); }
+            100% { transform: translate3d(40px,-40px,0) scale(1.1); }
+        }
+
+        /* Main card */
+        .shell {
+            width: 90%;
+            max-width: 1100px;
+            background: rgba(15,23,42,0.92);
+            border-radius: 18px;
+            padding: 26px 26px 30px;
+            box-shadow: 0 18px 45px rgba(0,0,0,0.6);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(148,163,184,0.3);
+        }
+
+        body.light .shell {
+            background: rgba(255,255,255,0.96);
+            border-color: rgba(148,163,184,0.4);
+        }
+
+        .shell-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .shell-title {
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+
+        .shell-sub {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .pill {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            border: 1px solid rgba(148,163,184,0.5);
+            cursor: pointer;
+            background: rgba(15,23,42,0.7);
+            color: #e5e7eb;
+        }
+
+        body.light .pill {
+            background: rgba(255,255,255,0.9);
+            color: #111827;
+        }
+
+        .pill.active {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .lang-select {
+            border-radius: 999px;
+            border: 1px solid rgba(148,163,184,0.5);
+            background: transparent;
+            color: inherit;
+            font-size: 11px;
+            padding: 4px 8px;
+        }
+
+        .logout-btn {
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: #ef4444;
+            color: white;
+            font-size: 12px;
+            text-decoration: none;
+            margin-left: 10px;
+            transition: 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+
+        main {
+            margin-top: 10px;
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- 3D background orbs -->
+    <div class="bg-orbit">
+        <div class="orb one"></div>
+        <div class="orb two"></div>
+        <div class="orb three"></div>
+    </div>
+
+    <div class="shell">
+        <div class="shell-header">
+            <div>
+                <div class="shell-title" data-i18n="title">Employee System</div>
+                <div class="shell-sub" data-i18n="subtitle">Manage your team beautifully</div>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div class="controls">
+                    <div id="theme-system" class="pill active" onclick="setTheme('system')">System</div>
+                    <div id="theme-light" class="pill" onclick="setTheme('light')">Light</div>
+                    <div id="theme-dark" class="pill" onclick="setTheme('dark')">Dark</div>
+
+                    <select id="lang" class="lang-select" onchange="changeLang(this.value)">
+                        <option value="en">EN</option>
+                        <option value="ar">AR</option>
+                    </select>
+                </div>
+
+                <a href="/logout" class="logout-btn" data-i18n="logout">Logout</a>
+            </div>
+        </div>
+
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+<script>
+/* ------------------ TRANSLATIONS ------------------ */
+const translations = {
+    en: {
+        title: "Employee System",
+        subtitle: "Manage your team beautifully",
+
+        login_title: "Login",
+        login_username: "Username",
+        login_password: "Password",
+        login_button: "Login",
+        login_create: "Create an account",
+
+        signup_title: "Create Account",
+        signup_button: "Sign Up",
+
+        emp_title: "Employee Management",
+        emp_id: "Employee ID",
+        emp_name: "Full Name",
+        emp_email: "Email",
+        emp_position: "Position",
+        emp_add: "Add Employee",
+        emp_actions: "Actions",
+        emp_edit: "Edit",
+        emp_delete: "Delete",
+
+        err_required: "All fields are required",
+        err_email_exists: "Email already exists",
+        err_id_exists: "ID already exists",
+
+        logout: "Logout",
+        cancel: "Cancel"
+    },
+
+    ar: {
+        title: "نظام الموظفين",
+        subtitle: "إدارة فريقك بشكل جميل",
+
+        login_title: "تسجيل الدخول",
+        login_username: "اسم المستخدم",
+        login_password: "كلمة المرور",
+        login_button: "دخول",
+        login_create: "إنشاء حساب",
+
+        signup_title: "إنشاء حساب جديد",
+        signup_button: "تسجيل",
+
+        emp_title: "إدارة الموظفين",
+        emp_id: "رقم الموظف",
+        emp_name: "الاسم الكامل",
+        emp_email: "البريد الإلكتروني",
+        emp_position: "الوظيفة",
+        emp_add: "إضافة موظف",
+        emp_actions: "العمليات",
+        emp_edit: "تعديل",
+        emp_delete: "حذف",
+
+        err_required: "جميع الحقول مطلوبة",
+        err_email_exists: "البريد الإلكتروني مستخدم مسبقًا",
+        err_id_exists: "رقم الموظف مستخدم مسبقًا",
+
+        logout: "تسجيل الخروج",
+        cancel: "إلغاء"
+    }
+};
+
+/* ------------------ LANGUAGE ------------------ */
+function applyLang(lang) {
+    const dict = translations[lang] || translations.en;
+
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (dict[key]) el.textContent = dict[key];
+    });
+
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+        const key = el.getAttribute("data-i18n-placeholder");
+        if (dict[key]) el.placeholder = dict[key];
+    });
+
+    document.body.style.direction = (lang === "ar") ? "rtl" : "ltr";
+
+    localStorage.setItem("lang", lang);
+    document.getElementById("lang").value = lang;
+}
+
+function changeLang(lang) {
+    applyLang(lang);
+}
+
+/* ------------------ THEME ------------------ */
+function applyTheme(theme) {
+    const body = document.body;
+    body.classList.remove("dark", "light");
+
+    if (theme === "system") {
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        body.classList.add(prefersDark ? "dark" : "light");
+    } else {
+        body.classList.add(theme);
+    }
+
+    document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+    document.getElementById(`theme-${theme}`).classList.add("active");
+
+    localStorage.setItem("theme", theme);
+}
+
+function setTheme(theme) {
+    applyTheme(theme);
+}
+
+function initTheme() {
+    const saved = localStorage.getItem("theme") || "system";
+    applyTheme(saved);
+}
+
+/* ------------------ INIT ------------------ */
+window.addEventListener("DOMContentLoaded", () => {
+    initTheme();
+
+    const savedLang = localStorage.getItem("lang") || "en";
+    applyLang(savedLang);
+
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+        if (localStorage.getItem("theme") === "system") {
+            applyTheme("system");
+        }
+    });
+});
+</script>
+
+</body>
+</html>

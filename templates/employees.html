@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 data-i18n="emp_title" style="margin-bottom:15px;"></h2>
+
+<!-- Add Employee Form -->
+<div class="form-box" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px;">
+    <input id="emp_id" type="number" data-i18n-placeholder="emp_id"
+           style="flex:1; padding:10px; border-radius:8px; border:1px solid #4b5563; background:#020617; color:white;">
+
+    <input id="emp_name" type="text" data-i18n-placeholder="emp_name"
+           style="flex:1; padding:10px; border-radius:8px; border:1px solid #4b5563; background:#020617; color:white;">
+
+    <input id="emp_email" type="email" data-i18n-placeholder="emp_email"
+           style="flex:1; padding:10px; border-radius:8px; border:1px solid #4b5563; background:#020617; color:white;">
+
+    <input id="emp_position" type="text" data-i18n-placeholder="emp_position"
+           style="flex:1; padding:10px; border-radius:8px; border:1px solid #4b5563; background:#020617; color:white;">
+
+    <button onclick="addEmployee()" data-i18n="emp_add"
+            style="padding:10px 20px; border-radius:8px; background:#3b82f6; border:none; color:white; cursor:pointer;">
+    </button>
+
+    <p id="error" style="color:red; width:100%; margin-top:5px;"></p>
+</div>
+
+<!-- Employee Table -->
+<table style="width:100%; border-collapse:collapse; color:white;">
+    <thead>
+        <tr>
+            <th data-i18n="emp_id" style="padding:10px; border-bottom:1px solid #444;"></th>
+            <th data-i18n="emp_name" style="padding:10px; border-bottom:1px solid #444;"></th>
+            <th data-i18n="emp_email" style="padding:10px; border-bottom:1px solid #444;"></th>
+            <th data-i18n="emp_position" style="padding:10px; border-bottom:1px solid #444;"></th>
+            <th data-i18n="emp_actions" style="padding:10px; border-bottom:1px solid #444;"></th>
+        </tr>
+    </thead>
+    <tbody id="emp_table"></tbody>
+</table>
+
+<!-- Edit Modal -->
+<div id="editModal" class="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7);">
+    <div class="modal-content"
+         style="background:#1e293b; padding:20px; width:350px; margin:100px auto; border-radius:10px; color:white;">
+        <h3 data-i18n="emp_edit" style="margin-bottom:15px;"></h3>
+
+        <input id="edit_name" type="text" data-i18n-placeholder="emp_name"
+               style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #4b5563; background:#020617; color:white;">
+
+        <input id="edit_email" type="email" data-i18n-placeholder="emp_email"
+               style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #4b5563; background:#020617; color:white;">
+
+        <input id="edit_position" type="text" data-i18n-placeholder="emp_position"
+               style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #4b5563; background:#020617; color:white;">
+
+        <button onclick="saveEdit()" data-i18n="emp_edit"
+                style="padding:10px; width:100%; border-radius:8px; background:#3b82f6; border:none; color:white; cursor:pointer; margin-bottom:10px;">
+        </button>
+
+        <button onclick="closeModal()" class="cancel"
+                style="padding:10px; width:100%; border-radius:8px; background:#555; border:none; color:white; cursor:pointer;"
+                data-i18n="cancel">
+            Cancel
+        </button>
+    </div>
+</div>
+
+<script>
+let editId = null;
+
+// Load employees on page load
+window.onload = () => {
+    loadEmployees();
+    applyLang(localStorage.getItem("lang") || "en");
+};
+
+function loadEmployees() {
+    fetch("/api/employees")
+        .then(res => res.json())
+        .then(data => {
+            const table = document.getElementById("emp_table");
+            table.innerHTML = "";
+
+            data.forEach(emp => {
+                table.innerHTML += `
+                    <tr>
+                        <td style="padding:10px;">${emp.id}</td>
+                        <td style="padding:10px;">${emp.name}</td>
+                        <td style="padding:10px;">${emp.email}</td>
+                        <td style="padding:10px;">${emp.position}</td>
+                        <td style="padding:10px;">
+                            <button class="edit-btn" data-i18n="emp_edit"
+                                    onclick="openEdit(${emp.id}, '${emp.name}', '${emp.email}', '${emp.position}')"
+                                    style="padding:6px 10px; border-radius:6px; background:#ffaa00; border:none; cursor:pointer;">
+                            </button>
+
+                            <button class="delete-btn" data-i18n="emp_delete"
+                                    onclick="deleteEmployee(${emp.id})"
+                                    style="padding:6px 10px; border-radius:6px; background:#ff4444; border:none; cursor:pointer; color:white;">
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            applyLang(localStorage.getItem("lang") || "en");
+        });
+}
+
+function addEmployee() {
+    const id = document.getElementById("emp_id").value.trim();
+    const name = document.getElementById("emp_name").value.trim();
+    const email = document.getElementById("emp_email").value.trim();
+    const position = document.getElementById("emp_position").value.trim();
+
+    if (!id || !name || !email || !position) {
+        document.getElementById("error").innerText =
+            translations[localStorage.getItem("lang")].err_required;
+        return;
+    }
+
+    fetch("/api/employees", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ id: Number(id), name, email, position })
+    })
+    .then(async res => {
+        const data = await res.json();
+        if (!res.ok) {
+            document.getElementById("error").innerText = data.error;
+        } else {
+            document.getElementById("error").innerText = "";
+            loadEmployees();
+        }
+    });
+}
+
+function deleteEmployee(id) {
+    fetch(`/api/employees/${id}`, { method: "DELETE" })
+        .then(() => loadEmployees());
+}
+
+function openEdit(id, name, email, position) {
+    editId = id;
+    document.getElementById("edit_name").value = name;
+    document.getElementById("edit_email").value = email;
+    document.getElementById("edit_position").value = position;
+    document.getElementById("editModal").style.display = "block";
+}
+
+function closeModal() {
+    document.getElementById("editModal").style.display = "none";
+}
+
+function saveEdit() {
+    const name = document.getElementById("edit_name").value.trim();
+    const email = document.getElementById("edit_email").value.trim();
+    const position = document.getElementById("edit_position").value.trim();
+
+    fetch(`/api/employees/${editId}`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ name, email, position })
+    })
+    .then(async res => {
+        const data = await res.json();
+        if (!res.ok) {
+            alert(data.error);
+        } else {
+            closeModal();
+            loadEmployees();
+        }
+    });
+}
+</script>
+
+{% endblock %}

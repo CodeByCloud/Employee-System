@@ -1,0 +1,142 @@
+/* ====== GENERAL ====== */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, #0f0f0f, #1b1b1b);
+    color: #f2f2f2;
+}
+
+/* ====== CONTAINER ====== */
+.container {
+    width: 420px;
+    margin: 80px auto;
+    background: #1e1e1e;
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.4);
+    border: 1px solid #333;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #00aaff;
+    letter-spacing: 1px;
+}
+
+/* ====== INPUTS & BUTTONS ====== */
+input, button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 15px;
+}
+
+input {
+    background: #2a2a2a;
+    color: white;
+    border: 1px solid #444;
+}
+
+input:focus {
+    outline: none;
+    border-color: #00aaff;
+}
+
+button {
+    background: #00aaff;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #0088cc;
+}
+
+/* ====== TABLE ====== */
+.table-container {
+    width: 700px;
+    margin: 50px auto;
+    background: #1e1e1e;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.4);
+    border: 1px solid #333;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #ddd;
+}
+
+th {
+    background: transparent;
+    color: #00aaff;
+    padding: 12px;
+    border-bottom: 1px solid #333;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #333;
+}
+
+.delete-btn {
+    background: #ff4444;
+    padding: 8px 12px;
+    border-radius: 6px;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background: #cc0000;
+}
+
+/* ====== LINKS ====== */
+a {
+    color: #00aaff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+    background: #111;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #333;
+}
+
+.navbar a {
+    color: #00aaff;
+    margin-left: 20px;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.navbar a:hover {
+    color: #0088cc;
+}
+
+.logo {
+    color: #00aaff;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.page-content {
+    margin-top: 40px;
+}

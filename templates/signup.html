@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 data-i18n="signup_title" style="margin-bottom:15px;"></h2>
+
+<form method="POST" style="display:flex; flex-direction:column; gap:12px;">
+
+    <input type="text" name="username"
+           data-i18n-placeholder="login_username"
+           style="padding:10px; border-radius:8px; border:1px solid #4b5563; background:#020617; color:white;">
+
+    <input type="password" name="password"
+           data-i18n-placeholder="login_password"
+           style="padding:10px; border-radius:8px; border:1px solid #4b5563; background:#020617; color:white;">
+
+    <button type="submit"
+            data-i18n="signup_button"
+            style="margin-top:14px; width:100%; padding:10px; border-radius:999px; border:none; background:#3b82f6; color:white; font-weight:500; cursor:pointer;">
+    </button>
+</form>
+
+<p style="text-align:center; margin-top:15px;">
+    <a href="/login" data-i18n="login_button" style="opacity:0.8;"></a>
+</p>
+
+{% endblock %}

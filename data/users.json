@@ -1,6 +1,14 @@
 [
-  {
-    "username": "zainah",
-    "password": "123456"
-  }
+    {
+        "username": "zainah",
+        "password": "123456"
+    },
+    {
+        "username": "admin",
+        "password": "123456"
+    },
+    {
+        "username": "lana",
+        "password": "123456"
+    }
 ]

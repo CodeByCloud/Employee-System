@@ -201,7 +201,9 @@
                     </select>
                 </div>
 
+                {% if not hide_logout %}
                 <a href="/logout" class="logout-btn" data-i18n="logout">Logout</a>
+                {% endif %}
             </div>
         </div>
 

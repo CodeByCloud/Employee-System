@@ -52,7 +52,7 @@ def signup():
 
         # Check if user already exists
         if any(u["username"] == username for u in users):
-            return "User already exists", 400
+            return render_template("signup.html", error="Username already exists. Please choose another."), 400
 
         # Save new user
         users.append({"username": username, "password": password})
@@ -81,7 +81,7 @@ def login():
             session["user"] = user
             return redirect(url_for("employees_page"))
 
-        return "Invalid credentials", 401
+        return render_template("login.html", error="Invalid username or password."), 401
 
     return render_template("login.html")
 
